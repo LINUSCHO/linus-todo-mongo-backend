@@ -99,12 +99,20 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // 기타 보안 헤더 설정
 app.use((req, res, next) => {
+  // Referrer Policy 명시적 설정 (strict-origin-when-cross-origin 문제 해결)
+  res.header('Referrer-Policy', 'strict-origin-when-cross-origin');
+  
   // 기타 보안 헤더
   res.header('X-Content-Type-Options', 'nosniff');
   res.header('X-Frame-Options', 'DENY');
   res.header('X-XSS-Protection', '1; mode=block');
   res.header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
   
+  // Cross-Origin 관련 헤더
+  res.header('Cross-Origin-Embedder-Policy', 'unsafe-none');
+  res.header('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+  res.header('Cross-Origin-Resource-Policy', 'cross-origin');
+
   next();
 });
 

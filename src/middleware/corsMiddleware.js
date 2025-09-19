@@ -20,11 +20,18 @@ const handleCors = (req, res, next) => {
   res.header('Access-Control-Allow-Credentials', 'true');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 
-    'Origin, X-Requested-With, Content-Type, Accept, Authorization, Cache-Control, Pragma'
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization, Cache-Control, Pragma, X-CSRF-Token'
   );
+  res.header('Access-Control-Expose-Headers', 'X-Total-Count, X-Page-Count, X-Requested-With');
+  res.header('Access-Control-Max-Age', '86400'); // 24시간 캐시
   
   // Referrer Policy 설정 (strict-origin-when-cross-origin 문제 해결)
-  res.header('Referrer-Policy', 'no-referrer-when-downgrade');
+  res.header('Referrer-Policy', 'strict-origin-when-cross-origin');
+  
+  // 추가 보안 헤더
+  res.header('X-Content-Type-Options', 'nosniff');
+  res.header('X-Frame-Options', 'DENY');
+  res.header('X-XSS-Protection', '1; mode=block');
   
   // Content Security Policy 설정
   res.header('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';");

@@ -1,7 +1,7 @@
 // 보안 및 CORS 관련 미들웨어
 const securityHeaders = (req, res, next) => {
   // Referrer Policy 설정 (strict-origin-when-cross-origin 문제 해결)
-  res.header('Referrer-Policy', 'no-referrer-when-downgrade');
+  res.header('Referrer-Policy', 'strict-origin-when-cross-origin');
   
   // Cross-Origin Embedder Policy
   res.header('Cross-Origin-Embedder-Policy', 'unsafe-none');
