@@ -1,0 +1,24 @@
+{
+  "name": "linus-todo-mongo-backend",
+  "version": "1.0.0",
+  "description": "Linus Todo MongoDB Backend API",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "build": "echo 'No build step required'",
+    "dev": "nodemon index.js"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "keywords": ["todo", "mongodb", "express", "api", "backend"],
+  "author": "LINUSCHO",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "mongoose": "^8.18.1"
+  }
+}

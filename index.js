@@ -38,36 +38,37 @@ console.log('=====================');
 
 const app = express();
 
-// CORS 설정
-const corsOptions = {
-  origin: function (origin, callback) {
-    // 개발 환경에서는 모든 origin 허용
-    if (process.env.NODE_ENV === 'development') {
-      callback(null, true);
-    } else {
-      // 프로덕션에서는 환경 변수에서 허용된 도메인 목록 가져오기
-      const allowedOrigins = process.env.ALLOWED_ORIGINS 
-        ? process.env.ALLOWED_ORIGINS.split(',')
-        : [
-            'http://localhost:3000',
-            'http://localhost:5001',
-            'http://localhost:5173',
-            'http://localhost:8080',
-            'http://127.0.0.1:3000',
-            'http://127.0.0.1:5001',
-            'http://127.0.0.1:5173',
-            'http://127.0.0.1:8080'
-          ];
-      
-      // origin이 없거나 허용된 목록에 있으면 허용
-      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-        callback(null, true);
-      } else {
-        console.warn(`CORS 차단: ${origin}은 허용되지 않은 도메인입니다.`);
-        callback(new Error('CORS 정책에 의해 차단되었습니다.'));
-      }
-    }
-  },
+        // CORS 설정 (Cloudtype 호환)
+        const corsOptions = {
+          origin: function (origin, callback) {
+            // 개발 환경이나 Cloudtype에서는 모든 origin 허용
+            if (process.env.NODE_ENV === 'development' || process.env.CLOUDTYPE_DEPLOYMENT) {
+              callback(null, true);
+            } else {
+              // 프로덕션에서는 환경 변수에서 허용된 도메인 목록 가져오기
+              const allowedOrigins = process.env.ALLOWED_ORIGINS
+                ? process.env.ALLOWED_ORIGINS.split(',')
+                : [
+                    'https://linus-todo-mongo-backend.cloudtype.app',
+                    'http://localhost:3000',
+                    'http://localhost:5001',
+                    'http://localhost:5173',
+                    'http://localhost:8080',
+                    'http://127.0.0.1:3000',
+                    'http://127.0.0.1:5001',
+                    'http://127.0.0.1:5173',
+                    'http://127.0.0.1:8080'
+                  ];
+
+              // origin이 없거나 허용된 목록에 있으면 허용
+              if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+                callback(null, true);
+              } else {
+                console.warn(`CORS 차단: ${origin}은 허용되지 않은 도메인입니다.`);
+                callback(new Error('CORS 정책에 의해 차단되었습니다.'));
+              }
+            }
+          },
   credentials: process.env.CORS_CREDENTIALS === 'true' || true, // 쿠키와 인증 정보 허용
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: [
@@ -171,11 +172,17 @@ app.use((req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 5001; // 포트 번호를 5001번으로 설정
+// Cloudtype 호환 포트 설정
+const PORT = process.env.PORT || process.env.CLOUDTYPE_PORT || 5001;
 
-app.listen(PORT, () => {
-  console.log(`서버가 포트 ${PORT}에서 실행 중입니다.`);
-  console.log(`환경: ${process.env.NODE_ENV}`);
+// Cloudtype에서 0.0.0.0으로 바인딩 (모든 인터페이스에서 접근 가능)
+const HOST = process.env.HOST || '0.0.0.0';
+
+app.listen(PORT, HOST, () => {
+  console.log(`🚀 서버가 ${HOST}:${PORT}에서 실행 중입니다.`);
+  console.log(`🌍 환경: ${process.env.NODE_ENV}`);
+  console.log(`📊 MongoDB: ${process.env.MONGODB_URI ? '연결됨' : '설정 필요'}`);
+  console.log(`🔗 CORS 허용 도메인: ${process.env.ALLOWED_ORIGINS || '모든 도메인'}`);
 });
 
 module.exports = app;
